@@ -1,0 +1,11 @@
+- run "minikube start" to start minikube on my local machine
+- run application to get /target/XXXXX.jar file
+- create Dockerfile
+- run "docker build -t springboot-java-mysql-k8s ." to get docker images  (check image created by run "docker images")
+- run "eval $(minikube docker-env)"
+- create k8s deployment by run "kubectl create deployment springboot-java-mysql-k8s --image=springboot-java-mysql-k8s:latest --port=8080"
+- run "kubectl get deployments" to get deployment name
+- run "kubectl get pods" to get pod name
+- run "kubectl expose deployment springboot-java-mysql-k8s --type=NodePort" to create service
+- run "minikube service springboot-kubernetes" to Get the service url
+
