@@ -9,3 +9,11 @@
 - run "kubectl expose deployment springboot-java-mysql-k8s --type=NodePort" to create service
 - run "minikube service springboot-kubernetes" to Get the service url
 
+mvn clean install spring-boot:run
+minikube start
+minikube stop --all
+minikube dashboard
+kubectl apply -f deployment.yaml
+docker build -t springboot-java-mysql-docker-image:1.0 .
+docker run -p 8080:8080 springboot-java-mysql-docker-image:1.0
+docker rmi springboot-java-mysql-docker-image:1.0 --force
