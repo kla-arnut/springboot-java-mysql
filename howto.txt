@@ -1,19 +1,71 @@
-- run "minikube start" to start minikube on my local machine
-- run application to get /target/XXXXX.jar file
-- create Dockerfile
-- run "docker build -t springboot-java-mysql-k8s ." to get docker images  (check image created by run "docker images")
-- run "eval $(minikube docker-env)"
-- create k8s deployment by run "kubectl create deployment springboot-java-mysql-k8s --image=springboot-java-mysql-k8s:latest --port=8080"
-- run "kubectl get deployments" to get deployment name
-- run "kubectl get pods" to get pod name
-- run "kubectl expose deployment springboot-java-mysql-k8s --type=NodePort" to create service
-- run "minikube service springboot-kubernetes" to Get the service url
+## build app on k8s
+- $ cd ~/gitworks/<your_project>
 
-mvn clean install spring-boot:run
-minikube start
-minikube stop --all
-minikube dashboard
-kubectl apply -f deployment.yaml
-docker build -t springboot-java-mysql-docker-image:1.0 .
-docker run -p 8080:8080 springboot-java-mysql-docker-image:1.0
-docker rmi springboot-java-mysql-docker-image:1.0 --force
+- $ minikube start 
+to start minikube on my local machine
+
+- $ eval $(minikube docker-env)
+to config docker-env to minikube
+
+- $ mvn clean install spring-boot:run
+to get <root_project_path>/target/XXXXX.jar file
+and you can run http://localhost:8080 on your browser
+
+- create Dockerfile on <root_project_path>
+
+- $ docker build -t springboot-java-mysql-docker-image:1.0 .
+to get docker images  (check image created by run "$ docker images")
+
+- $ docker run -p 8080:8080 springboot-java-mysql-docker-image:1.0
+to check container from image is worked (must no error on console)
+
+- $ minikube image load springboot-java-mysql-docker-image:1.0
+to register image to minikube
+
+- create k8s deployment.yaml file
+
+- $ kubectl apply -f deployment.yaml 
+to create deployment and pod(s)
+
+- $ kubectl expose deployment springboot-java-mysql-k8s-deployment --type=NodePort
+to expose deployment
+
+- $ minikube service springboot-java-mysql-k8s-deployment
+to redirect to app url
+
+- $ kubectl autoscale deployment springboot-java-mysql-k8s-deployment --cpu-percent=50 --min=1 --max=10
+add autoscale
+
+## test autoscale is WORK or NOT
+-call url with while loop: 1tab 
+$ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://192.168.49.2:30570/insurance/all; done"
+-view autoscaling change: 1tab 
+$ kubectl get hpa springboot-java-mysql-k8s-deployment --watch
+-view deployment change: 1tab 
+$ kubectl get deployments --watch
+
+- $ minikube stop --all
+- $ minikube delete --all
+to stop all service and unlink docker
+
+
+
+NOTE
+- check pods is running
+    $ kubectl get pods
+- check deployment is running
+    $ kubectl get deployments
+- open minikube browser dashboard
+    $ minikube dashboard
+- get node(s)
+    $ kubectl get nodes -o wide
+- view logs on pod name
+    $ kubectl logs <podname>
+- get description of deployment
+    $ kubectl describe deployments/<deploymentname>
+- get description of pod
+    $ kubectl describe pods/<podname>
+- delete pod    
+    $ kubectl delete pod <podname>
+- delete deployment
+    $ kubectl delete deployment <deploymentname>
