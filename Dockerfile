@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk16:x86_64-alpine-jre-16.0.1_9
+FROM openjdk:17-oracle
 WORKDIR /opt
 ENV PORT 8080
 EXPOSE 8080
